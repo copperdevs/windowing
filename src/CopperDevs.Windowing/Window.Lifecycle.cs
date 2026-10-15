@@ -9,10 +9,14 @@ public sealed partial class Window
         backend.CreateWindow(options);
         input = backend.GetRelevantInputBackend();
         CheckTimeSupport();
+        created = true;
     }
 
     public void Run()
     {
+        if (!created)
+            throw new Exception("Window not created");
+
         OnLoad?.Invoke();
 
         while (shouldRun)
@@ -30,7 +34,7 @@ public sealed partial class Window
     private void RenderFrame()
     {
         OnFrameStart?.Invoke();
-        
+
         TimeTick();
 
         input.UpdateInput();
@@ -45,8 +49,8 @@ public sealed partial class Window
         backend.StopWindowUpdate();
 
         OnFrameEnd?.Invoke();
-        
-        if(backend.RequestsStop())
+
+        if (backend.RequestsStop())
             Stop();
     }
 

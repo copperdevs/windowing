@@ -19,6 +19,8 @@ public static class Program
         };
 
         using var window = new Window(new SDLBackend(), options);
+        window.Create();
+        
         fps = window.CreateFPSCounter();
         
         window.OnLoad += OnLoad;

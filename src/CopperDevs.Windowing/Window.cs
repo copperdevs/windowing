@@ -17,6 +17,8 @@ public sealed partial class Window : SafeDisposable
     private long previousFrameStartTime;
     private long currentFrameDeltaTime;
 
+    private bool created;
+
     /// <summary>
     /// Should the window still be updating
     /// </summary>
@@ -41,5 +43,7 @@ public sealed partial class Window : SafeDisposable
         this.options = options;
 
         startTime = TimeUtility.UtcNow();
+
+        created = false;
     }
 }
