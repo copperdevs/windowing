@@ -10,7 +10,6 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\..\..\CopperDevs.Windowing.Utility\CopperDevs.Windowing.Utility.csproj" />
       <ProjectReference Include="..\..\CopperDevs.Windowing\CopperDevs.Windowing.csproj" />
       <ProjectReference Include="..\CopperDevs.Windowing.SDL3\CopperDevs.Windowing.SDL3.csproj" />
     </ItemGroup>

@@ -23,11 +23,11 @@
     </PropertyGroup>
 
     <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
-        <DocumentationFile>bin\Debug\CopperDevs.Windowing.xml</DocumentationFile>
+        <DocumentationFile></DocumentationFile>
     </PropertyGroup>
 
     <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
-        <DocumentationFile>bin\Release\CopperDevs.Windowing.xml</DocumentationFile>
+        <DocumentationFile></DocumentationFile>
     </PropertyGroup>
 
     <ItemGroup>

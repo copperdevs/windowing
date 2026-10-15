@@ -1,6 +1,7 @@
 using System.Drawing;
 using System.Numerics;
 using CopperDevs.Celesium;
+using CopperDevs.Windowing.SDL3.Utility;
 
 #pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
 namespace CopperDevs.Windowing.SDL3.Example;

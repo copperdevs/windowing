@@ -1,7 +1,7 @@
 using System.Runtime.InteropServices;
 
 #pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
-namespace CopperDevs.Windowing.SDL3;
+namespace CopperDevs.Windowing.SDL3.Utility;
 
 // ReSharper disable once InconsistentNaming
 public static unsafe class SDLUtil

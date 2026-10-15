@@ -8,8 +8,6 @@ namespace CopperDevs.Windowing.Testing;
 // testing project moment
 public static class Program
 {
-    private static Window window = null!;
-
     private static FPSCounter fps = null!;
 
     public static void Main()
@@ -20,21 +18,16 @@ public static class Program
             FrameRenderDelay = 10
         };
 
-        window = new Window(new SDLBackend(), options);
-        window.Create();
-
+        using var window = new Window(new SDLBackend(), options);
+        fps = window.CreateFPSCounter();
+        
         window.OnLoad += OnLoad;
         window.OnUpdate += OnUpdate;
         window.OnRender += OnRender;
         window.OnClose += OnClose;
-
-        fps = window.CreateFPSCounter();
-
+        
         window.Run();
-
-        window.Dispose();
     }
-
 
     private static void OnLoad()
     {

@@ -23,7 +23,7 @@ public static class Program
     private const float ArrowChanger = 0.5f;
     private static float scale = 1;
 
-    private static FPSCounter fps;
+    private static FPSCounter fps = null!;
 
     public static void Main()
     {
