@@ -2,7 +2,7 @@ using CopperDevs.Windowing.Data;
 
 namespace CopperDevs.Windowing.SDL3.Data;
 
-internal class SdlMouseMap : Dictionary<MouseButton, SDLButton>
+internal sealed class SdlMouseMap : Dictionary<MouseButton, SDLButton>
 {
     public SdlMouseMap()
     {

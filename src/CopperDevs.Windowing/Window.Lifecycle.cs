@@ -7,6 +7,7 @@ public sealed partial class Window
     public void Create()
     {
         backend.CreateWindow(options);
+        input = backend.GetRelevantInputBackend();
         CheckTimeSupport();
     }
 
@@ -44,6 +45,9 @@ public sealed partial class Window
         backend.StopWindowUpdate();
 
         OnFrameStop?.Invoke();
+        
+        if(backend.RequestsStop())
+            Stop();
     }
 
     public override void DisposeResources()

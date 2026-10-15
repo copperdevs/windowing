@@ -3,6 +3,7 @@ using CopperDevs.Windowing.Data;
 
 namespace CopperDevs.Windowing;
 
+// highkey, this most def shouldnt be *this* baked into the windowing (mainly for key rebinding for games and shi) but thats a later issue!
 public sealed partial class Window
 {
     /// <summary>

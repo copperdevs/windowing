@@ -3,24 +3,18 @@ using CopperDevs.Windowing.Data;
 namespace CopperDevs.Windowing.SDL3.Data;
 
 // ReSharper disable once InconsistentNaming
-/// <summary>
-/// Layer above <see cref="WindowOptions"/> that adds SDL specific settings
-/// </summary>
-/// <remarks>Can be used with <see cref="CopperDevs.Windowing.Window.Create{TWindow}()"/> or <see cref="CopperDevs.Windowing.Window.Create{TWindow}(WindowOptions)"/></remarks>
 public record SDL3WindowOptions : WindowOptions
 {
     /// <summary>
     /// Flags for what to initialize the window with
     /// </summary>
-    public InitFlags InitFlags { get; set; } = InitFlags.Video;
+    public SDL_InitFlags InitFlags { get; set; } = SDL_InitFlags.SDL_INIT_VIDEO;
 
     /// <summary>
     /// Flags for the window to utilize
     /// </summary>
-    public WindowFlags WindowFlags { get; set; } = WindowFlags.Resizable | WindowFlags.HighPixelDensity;
+    public SDL_WindowFlags WindowFlags { get; set; } = SDL_WindowFlags.SDL_WINDOW_RESIZABLE | SDL_WindowFlags.SDL_WINDOW_HIGH_PIXEL_DENSITY;
 
-    public RendererOptions RendererOptions { get; set; } = new();
-    
     /// <summary>
     /// Default settings
     /// </summary>

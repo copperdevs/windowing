@@ -1,0 +1,20 @@
+<Solution>
+    <Folder Name="/Repo/">
+        <File Path=".gitignore"/>
+        <File Path="License.txt"/>
+        <File Path="ReadMe.md"/>
+    </Folder>
+    <Folder Name="/Repo/Scripts/">
+        <File Path="scripts/gen.py"/>
+        <File Path="scripts/layer.txt"/>
+        <File Path="scripts/methods.txt"/>
+        <File Path="scripts/output.txt"/>
+    </Folder>
+    <Folder Name="/SDL3/">
+        <Project Path="src/sdl3/CopperDevs.Windowing.SDL3.Example/CopperDevs.Windowing.SDL3.Example.csproj"/>
+        <Project Path="src/sdl3/CopperDevs.Windowing.SDL3/CopperDevs.Windowing.SDL3.csproj"/>
+    </Folder>
+    <Project Path="CopperDevs.Windowing.Utility/CopperDevs.Windowing.Utility.csproj"/>
+    <Project Path="src/CopperDevs.Windowing.Testing/CopperDevs.Windowing.Testing.csproj"/>
+    <Project Path="src/CopperDevs.Windowing/CopperDevs.Windowing.csproj"/>
+</Solution>

@@ -10,6 +10,8 @@ public interface IWindowingBackend : IDisposable
     public void StopWindowUpdate();
     public void DestroyWindow();
 
+    public bool RequestsStop();
+
     // TODO: have supported for handling a PlatformNotSupportedException being thrown here
     //  throw a proper relevant error internally, as well as add an option to override this input backend
     public IInput GetRelevantInputBackend();
@@ -18,10 +20,10 @@ public interface IWindowingBackend : IDisposable
     // time
     
     /// <remarks>value in milliseconds</remarks>
-    public virtual long GetTotalTime() => throw new NotSupportedException();
+    public long GetTotalTime() => throw new NotSupportedException();
     
     /// <remarks>value in milliseconds</remarks>
-    public virtual long GetDeltaTime() => throw new NotSupportedException();
+    public long GetDeltaTime() => throw new NotSupportedException();
 
     // size
     public Vector2Int GetWindowSize();

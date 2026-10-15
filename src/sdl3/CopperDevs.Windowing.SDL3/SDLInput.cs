@@ -9,12 +9,13 @@ namespace CopperDevs.Windowing.SDL3;
 // ReSharper disable once InconsistentNaming
 internal class SDLInput : IInput
 {
-    private const bool InputLogs = false;
+    private readonly SDLBackend backend;
+    private readonly ThinSDLWindow window;
 
-    private SDL3Window connectedWindow;
-
+    // ReSharper disable CollectionNeverUpdated.Local
     private readonly SdlKeyMap keyMap = new();
     private readonly SdlMouseMap mouseMap = new();
+    // ReSharper restore CollectionNeverUpdated.Local
 
     private readonly Dictionary<SDL_Keycode, bool> keyCurrentlyPressed = new();
     private readonly Dictionary<SDLButton, bool> buttonCurrentlyPressed = new();
@@ -39,84 +40,60 @@ internal class SDLInput : IInput
         return previousFrame ? previousFrameButtonCurrentlyPressed.GetValueOrDefault(mouseMap[button], false) : buttonCurrentlyPressed.GetValueOrDefault(mouseMap[button], false);
     }
 
-    private readonly List<EventType> targetEvents =
+    private readonly List<SDL_EventType> targetEvents =
     [
-        // EventType.WindowMouseEnter,
-        // EventType.WindowMouseLeave,
-        EventType.MouseMotion,
-        EventType.MouseButtonDown,
-        EventType.MouseButtonUp,
-        EventType.MouseWheel,
-        // EventType.MouseAdded,
-        // EventType.MouseRemoved,
-        EventType.KeyDown,
-        EventType.KeyUp,
-        // EventType.KeymapChanged,
-        // EventType.KeyboardAdded,
-        // EventType.KeyboardRemoved,
+        SDL_EventType.SDL_EVENT_MOUSE_MOTION,
+        SDL_EventType.SDL_EVENT_MOUSE_BUTTON_DOWN,
+        SDL_EventType.SDL_EVENT_MOUSE_BUTTON_UP,
+        SDL_EventType.SDL_EVENT_MOUSE_WHEEL,
+        SDL_EventType.SDL_EVENT_KEY_DOWN,
+        SDL_EventType.SDL_EVENT_KEY_UP,
     ];
 
-    public SDLInput(SDL3Window connectedWindow)
+    public SDLInput(SDLBackend target, ThinSDLWindow thin)
     {
-        this.connectedWindow = connectedWindow;
-
-        connectedWindow.GetManagedSDLWindow().HandleEvent += EventHandler;
+        backend = target;
+        window = thin;
+        thin.OnEvent += EventHandler;
     }
 
-    private void EventHandler(EventType eventType, SDL_Event eventData)
+    private void EventHandler(SDL_Event eventData)
     {
-        if (!targetEvents.Contains(eventType))
+        if (!targetEvents.Contains(eventData.Type))
             return;
 
         // ReSharper disable once SwitchStatementHandlesSomeKnownEnumValuesWithDefault
-        switch (eventType)
+        switch (eventData.Type)
         {
-            case EventType.MouseMotion:
+            case SDL_EventType.SDL_EVENT_MOUSE_MOTION:
                 mousePosition = mousePosition with
                 {
                     X = eventData.motion.x,
                     Y = eventData.motion.y,
                 };
-                if (InputLogs)
-                    Log.Debug($"Mouse Motion: <{eventData.motion.x},{eventData.motion.y}> | Mouse Motion Relative: <{eventData.motion.xrel},{eventData.motion.yrel}>");
                 break;
-            case EventType.MouseButtonDown:
+            case SDL_EventType.SDL_EVENT_MOUSE_BUTTON_DOWN:
                 buttonCurrentlyPressed[eventData.button.Button] = true;
-
-                if (InputLogs)
-                    Log.Debug($"Mouse Button Down: {eventData.button.Button}");
                 break;
-            case EventType.MouseButtonUp:
+            case SDL_EventType.SDL_EVENT_MOUSE_BUTTON_UP:
                 buttonCurrentlyPressed[eventData.button.Button] = false;
-
-                if (InputLogs)
-                    Log.Debug($"Mouse Button Up: {eventData.button.Button}");
                 break;
-            case EventType.MouseWheel:
+            case SDL_EventType.SDL_EVENT_MOUSE_WHEEL:
                 // lol invert moment
                 mouseScroll = mouseScroll with
                 {
                     X = eventData.wheel.x * -1,
                     Y = eventData.wheel.y * -1,
                 };
-
-                if (InputLogs)
-                    Log.Debug($"Mouse Wheel: <{eventData.wheel.x},{eventData.wheel.y}> | Direction: <{eventData.wheel.direction}>");
                 break;
-            case EventType.KeyDown:
+            case SDL_EventType.SDL_EVENT_KEY_DOWN:
                 keyCurrentlyPressed[eventData.key.key] = true;
-
-                if (InputLogs)
-                    Log.Debug($"Key Down: {eventData.key.key} | Modifier: {eventData.key.mod}");
                 break;
-            case EventType.KeyUp:
+            case SDL_EventType.SDL_EVENT_KEY_UP:
                 keyCurrentlyPressed[eventData.key.key] = false;
-
-                if (InputLogs)
-                    Log.Debug($"Key Up: {eventData.key.key} | Modifier: {eventData.key.mod}");
                 break;
             default:
-                throw new ArgumentOutOfRangeException(nameof(eventType), eventType, null);
+                throw new ArgumentOutOfRangeException(nameof(eventData.Type), eventData.Type, null);
         }
     }
 
@@ -139,7 +116,8 @@ internal class SDLInput : IInput
         {
             unsafe
             {
-                SDLAPI.WarpMouseInWindow(connectedWindow.GetNativeWindow(), connectedWindow.Size / 2);
+                var size = backend.GetWindowSize();
+                SDL_WarpMouseInWindow(window.GetNative(), size.X, size.Y);
             }
         }
     }
@@ -211,16 +189,16 @@ internal class SDLInput : IInput
         switch (cursorMode)
         {
             case CursorMode.Normal:
-                SDLAPI.ShowCursor();
-                SDLAPI.SetMouseRelativeMode(connectedWindow.GetNativeWindow(), false);
+                SDL_ShowCursor();
+                SDL_SetWindowRelativeMouseMode(window.GetNative(), false);
                 break;
             case CursorMode.Hidden:
-                SDLAPI.HideCursor();
-                SDLAPI.SetMouseRelativeMode(connectedWindow.GetNativeWindow(), false);
+                SDL_HideCursor();
+                SDL_SetWindowRelativeMouseMode(window.GetNative(), false);
                 break;
             case CursorMode.Locked:
-                SDLAPI.HideCursor();
-                SDLAPI.SetMouseRelativeMode(connectedWindow.GetNativeWindow(), true);
+                SDL_HideCursor();
+                SDL_SetWindowRelativeMouseMode(window.GetNative(), true);
                 break;
             default:
                 throw new ArgumentOutOfRangeException(nameof(cursorMode), cursorMode, null);

@@ -11,7 +11,7 @@ public sealed partial class Window : SafeDisposable
 {
     private readonly WindowOptions options;
     private readonly IWindowingBackend backend;
-    private readonly IInput input;
+    private IInput input;
 
     private readonly long startTime;
     private long previousFrameStartTime;
@@ -21,7 +21,7 @@ public sealed partial class Window : SafeDisposable
     /// Should the window still be updating
     /// </summary>
     private bool shouldRun;
-
+    
     public Action OnLoad = null!;
     public Action OnFrameStart = null!;
     public Action OnUpdate = null!;
@@ -39,9 +39,7 @@ public sealed partial class Window : SafeDisposable
 
         this.backend = backend;
         this.options = options;
-
-        input = backend.GetRelevantInputBackend();
-
+        
         startTime = TimeUtility.UtcNow();
     }
 }
