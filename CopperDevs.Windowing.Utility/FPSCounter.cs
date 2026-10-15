@@ -12,7 +12,7 @@ public sealed class FPSCounter
 
     public FPSCounter(Window target)
     {
-        target.OnPreUpdate += Update;
+        target.OnFrameStart += Update;
     }
 
     // ReSharper disable once ConvertToAutoPropertyWithPrivateSetter

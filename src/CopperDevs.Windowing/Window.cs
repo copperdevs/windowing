@@ -1,3 +1,5 @@
+using CopperDevs.Celesium;
+using CopperDevs.Windowing.Backend;
 using CopperDevs.Windowing.Data;
 
 namespace CopperDevs.Windowing;
@@ -5,53 +7,41 @@ namespace CopperDevs.Windowing;
 /// <summary>
 /// Base window
 /// </summary>
-public partial class Window
+public sealed partial class Window : SafeDisposable
 {
-    /// <summary>
-    /// All created windows
-    /// </summary>
-    protected static readonly List<Window> CreatedWindows = [];
+    private readonly WindowOptions options;
+    private readonly IWindowingBackend backend;
+    private readonly IInput input;
+
+    private readonly long startTime;
+    private long previousFrameStartTime;
+    private long currentFrameDeltaTime;
 
     /// <summary>
-    /// Create a new window with <see cref="WindowOptions.Default"/>
+    /// Should the window still be updating
     /// </summary>
-    /// <typeparam name="TWindow">The type of window to create</typeparam>
-    /// <returns>The created window</returns>
-    public static TWindow Create<TWindow>() where TWindow : Window, new() => Create<TWindow>(WindowOptions.Default);
+    private bool shouldRun;
 
-    /// <summary>
-    /// Create a new window with a user provided <see cref="WindowOptions"/>
-    /// </summary>
-    /// <typeparam name="TWindow">The type of window to create</typeparam>
-    /// <param name="options">Custom options for the window to be created with</param>
-    /// <returns>The created window</returns>
-    public static TWindow Create<TWindow>(WindowOptions options) where TWindow : Window, new()
+    public Action OnLoad = null!;
+    public Action OnFrameStart = null!;
+    public Action OnUpdate = null!;
+    public Action OnRender = null!;
+    public Action OnFrameStop = null!;
+    public Action OnClose = null!;
+
+    public Window(IWindowingBackend backend) : this(backend, WindowOptions.Default)
     {
-        return (TWindow)Create(typeof(TWindow), options);
     }
 
-    /// <summary>
-    /// Create a new window with <see cref="WindowOptions.Default"/>
-    /// </summary>
-    /// <param name="windowType">Type of the window class that derives from <see cref="Window"/></param>
-    /// <returns>Created window class as <see cref="Window"/></returns>
-    public static Window Create(Type windowType) => Create(windowType, WindowOptions.Default);
-
-    /// <summary>
-    /// Create a new window with a user provided <see cref="WindowOptions"/>
-    /// </summary>
-    /// <param name="windowType">Type of the window class that derives from <see cref="Window"/></param>
-    /// <param name="options">Custom options for the window to be created with</param>
-    /// <returns>The created window</returns>
-    public static Window Create(Type windowType, WindowOptions options)
+    public Window(IWindowingBackend backend, WindowOptions options)
     {
-        var window = (Window)Activator.CreateInstance(windowType)!;
-        window.Options = options;
+        shouldRun = true;
 
-        window.CreateWindow(window.Options);
+        this.backend = backend;
+        this.options = options;
 
-        CreatedWindows.Add(window);
+        input = backend.GetRelevantInputBackend();
 
-        return window;
+        startTime = TimeUtility.UtcNow();
     }
 }

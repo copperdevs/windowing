@@ -1,6 +1,7 @@
 ﻿using System.Numerics;
 using CopperDevs.Celesium;
 using CopperDevs.Windowing.Data;
+using CopperDevs.Windowing.Data.Input;
 using CopperDevs.Windowing.SDL3.Data;
 using CopperDevs.Windowing.Utility;
 

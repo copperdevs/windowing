@@ -1,46 +1,18 @@
 using System.Numerics;
-using CopperDevs.Celesium;
+using CopperDevs.Windowing.Data;
 
-namespace CopperDevs.Windowing.Data;
+namespace CopperDevs.Windowing;
 
-/// <summary>
-/// Input data for getting info from the mouse and keyboard
-/// </summary>
-public static class Input
+public sealed partial class Window
 {
-    private static Window window = null!;
-    private static IInput? input;
-
-    internal static void Connect(Window targetWindow, IInput targetInput)
-    {
-        window = targetWindow;
-        input = targetInput;
-    }
-
-    private static bool InputCheck()
-    {
-        if (input is not null)
-            return true;
-
-        Log.Warn("Input is not setup, attempting to setup now");
-        window.SetupInput();
-
-        return input is not null;
-    }
-
-    private static bool InputCheck(InputKey key)
-    {
-        return InputCheck() && input!.SupportsInputKey(key);
-    }
-
     /// <summary>
     /// Checks if a key was pressed this frame
     /// </summary>
     /// <param name="key">Key to check</param>
     /// <returns>True if the key was pressed this frame</returns>
-    public static bool IsKeyPressed(InputKey key)
+    public bool IsKeyPressed(InputKey key)
     {
-        return InputCheck(key) && input!.IsKeyPressed(key);
+        return input!.SupportsInputKey(key) && input!.IsKeyPressed(key);
     }
 
     /// <summary>
@@ -48,9 +20,9 @@ public static class Input
     /// </summary>
     /// <param name="key">Key to check</param>
     /// <returns>True if the key was down this frame</returns>
-    public static bool IsKeyDown(InputKey key)
+    public bool IsKeyDown(InputKey key)
     {
-        return InputCheck(key) && input!.IsKeyDown(key);
+        return input!.SupportsInputKey(key) && input!.IsKeyDown(key);
     }
 
     /// <summary>
@@ -58,9 +30,9 @@ public static class Input
     /// </summary>
     /// <param name="key">Key to check</param>
     /// <returns>True if the key was released this frame</returns>
-    public static bool IsKeyReleased(InputKey key)
+    public bool IsKeyReleased(InputKey key)
     {
-        return InputCheck(key) && input!.IsKeyReleased(key);
+        return input!.SupportsInputKey(key) && input!.IsKeyReleased(key);
     }
 
     /// <summary>
@@ -68,9 +40,9 @@ public static class Input
     /// </summary>
     /// <param name="key">Key to check</param>
     /// <returns>True if the key was up this frame</returns>
-    public static bool IsKeyUp(InputKey key)
+    public bool IsKeyUp(InputKey key)
     {
-        return InputCheck() && input!.IsKeyUp(key);
+        return input!.SupportsInputKey(key) && input!.IsKeyUp(key);
     }
 
     /// <summary>
@@ -78,9 +50,9 @@ public static class Input
     /// </summary>
     /// <param name="button">Mouse button to check</param>
     /// <returns>True if the mouse button was pressed this frame</returns>
-    public static bool IsMouseButtonPressed(MouseButton button)
+    public bool IsMouseButtonPressed(MouseButton button)
     {
-        return InputCheck() && input!.IsMouseButtonPressed(button);
+        return input!.IsMouseButtonPressed(button);
     }
 
     /// <summary>
@@ -88,9 +60,9 @@ public static class Input
     /// </summary>
     /// <param name="button">Mouse button to check</param>
     /// <returns>True if the mouse button was down this frame</returns>
-    public static bool IsMouseButtonDown(MouseButton button)
+    public bool IsMouseButtonDown(MouseButton button)
     {
-        return InputCheck() && input!.IsMouseButtonDown(button);
+        return input!.IsMouseButtonDown(button);
     }
 
     /// <summary>
@@ -98,9 +70,9 @@ public static class Input
     /// </summary>
     /// <param name="button">Mouse button to check</param>
     /// <returns>True if the mouse button was released this frame</returns>
-    public static bool IsMouseButtonReleased(MouseButton button)
+    public bool IsMouseButtonReleased(MouseButton button)
     {
-        return InputCheck() && input!.IsMouseButtonReleased(button);
+        return input!.IsMouseButtonReleased(button);
     }
 
     /// <summary>
@@ -108,45 +80,41 @@ public static class Input
     /// </summary>
     /// <param name="button">Mouse button to check</param>
     /// <returns>True if the mouse button was up this frame</returns>
-    public static bool IsMouseButtonUp(MouseButton button)
+    public bool IsMouseButtonUp(MouseButton button)
     {
-        return InputCheck() && input!.IsMouseButtonUp(button);
+        return input!.IsMouseButtonUp(button);
     }
 
     /// <summary>
     /// Get the current position of the mouse relative to the window
     /// </summary>
     /// <returns>Position of the mouse</returns>
-    public static Vector2 GetMousePosition()
+    public Vector2 GetMousePosition()
     {
-        return InputCheck() ? input!.GetMousePosition() : Vector2.Zero;
+        return input!.GetMousePosition();
     }
 
     /// <summary>
     /// Get the relative movement of the mouse
     /// </summary>
     /// <returns>Movement of the mouse</returns>
-    public static Vector2 GetMouseDelta()
+    public Vector2 GetMouseDelta()
     {
-        return InputCheck() ? input!.GetMouseDelta() : Vector2.Zero;
+        return input!.GetMouseDelta();
     }
 
     /// <summary>
     /// Get the mouse scroll delta
     /// </summary>
     /// <returns>Scroll value of the mouse</returns>
-    public static Vector2 GetMouseScroll()
+    public Vector2 GetMouseScroll()
     {
-        return InputCheck() ? input!.GetMouseScroll() : Vector2.Zero;
+        return input!.GetMouseScroll();
     }
 
     /// <summary>
     /// Set the cursor mode
     /// </summary>
     /// <param name="cursorMode">Mode to set</param>
-    public static void SetCursorMode(CursorMode cursorMode)
-    {
-        if (InputCheck())
-            input!.SetCursorMode(cursorMode);
-    }
+    public void SetCursorMode(CursorMode cursorMode) => input!.SetCursorMode(cursorMode);
 }

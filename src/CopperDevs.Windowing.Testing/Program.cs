@@ -9,7 +9,7 @@ namespace CopperDevs.Windowing.Testing;
 // testing project moment
 public static class Program
 {
-    private static SDL3Window window = null!;
+    private static Window window = null!;
     private static SDLRenderer renderer = null!;
 
     private static FPSCounter fps = null!;
@@ -18,10 +18,12 @@ public static class Program
     {
         var options = SDL3WindowOptions.Default with
         {
-            Title = "CopperDevs Windowing Example"
+            Title = "Windowing Example",
+            FrameRenderDelay = 10
         };
-
-        window = Window.Create<SDL3Window>(options);
+        
+        window = new Window(null, options);
+        window.Create();
         renderer = window.GetRenderer()!;
 
         window.OnLoad += OnLoad;

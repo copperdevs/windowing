@@ -1,10 +1,8 @@
-#pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
-
 using System.Drawing;
 using System.Numerics;
 using SystemColor = System.Drawing.Color;
 
-namespace CopperDevs.Windowing.Data;
+namespace CopperDevs.Windowing.Utility;
 
 public struct Color
 {
