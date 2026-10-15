@@ -44,7 +44,7 @@ public sealed partial class Window
 
         backend.StopWindowUpdate();
 
-        OnFrameStop?.Invoke();
+        OnFrameEnd?.Invoke();
         
         if(backend.RequestsStop())
             Stop();

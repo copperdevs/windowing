@@ -21,12 +21,12 @@ public sealed partial class Window : SafeDisposable
     /// Should the window still be updating
     /// </summary>
     private bool shouldRun;
-    
+
     public Action OnLoad = null!;
     public Action OnFrameStart = null!;
     public Action OnUpdate = null!;
     public Action OnRender = null!;
-    public Action OnFrameStop = null!;
+    public Action OnFrameEnd = null!;
     public Action OnClose = null!;
 
     public Window(IWindowingBackend backend) : this(backend, WindowOptions.Default)
@@ -39,7 +39,7 @@ public sealed partial class Window : SafeDisposable
 
         this.backend = backend;
         this.options = options;
-        
+
         startTime = TimeUtility.UtcNow();
     }
 }
