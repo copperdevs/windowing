@@ -8,12 +8,16 @@ namespace CopperDevs.Windowing.Win32;
 [SupportedOSPlatform("windows5.0")]
 public class Win32Backend : IWindowingBackend
 {
+    private ThinWin32Window thin = null!;
+
     public void CreateWindow(WindowOptions options)
     {
+        thin = new ThinWin32Window(options);
     }
 
     public void StartWindowUpdate()
     {
+        thin.Poll();
     }
 
     public void StopWindowUpdate()
@@ -26,7 +30,7 @@ public class Win32Backend : IWindowingBackend
 
     public bool RequestsStop()
     {
-        return false;
+        return thin.RequestsShutdown;
     }
 
     public IInput GetRelevantInputBackend()
@@ -136,5 +140,6 @@ public class Win32Backend : IWindowingBackend
 
     public void Dispose()
     {
+        thin.Dispose();
     }
 }

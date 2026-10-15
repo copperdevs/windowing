@@ -1,3 +1,16 @@
 CreateWindowEx
 CW_USEDEFAULT
 ShowWindow
+RegisterClass
+GetModuleHandle
+DefWindowProc
+UnregisterClass
+DestroyWindow
+PeekMessage
+GetMessage
+TranslateMessage
+DispatchMessage
+PostQuitMessage
+WM_QUIT
+WM_CLOSE
+WM_DESTROY

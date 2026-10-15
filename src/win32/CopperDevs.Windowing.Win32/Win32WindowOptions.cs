@@ -6,8 +6,6 @@ namespace CopperDevs.Windowing.Win32;
 [SupportedOSPlatform("windows5.0")]
 public record Win32WindowOptions : WindowOptions
 {
-    public string? WindowClassName;
-
     /// <summary>
     /// Default settings
     /// </summary>
