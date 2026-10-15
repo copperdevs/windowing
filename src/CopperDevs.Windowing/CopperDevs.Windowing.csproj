@@ -23,15 +23,15 @@
     </PropertyGroup>
 
     <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
-        <DocumentationFile>bin\Debug\CopperDevs.Windowing.xml</DocumentationFile>
+        <DocumentationFile></DocumentationFile>
     </PropertyGroup>
 
     <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
-        <DocumentationFile>bin\Release\CopperDevs.Windowing.xml</DocumentationFile>
+        <DocumentationFile></DocumentationFile>
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="CopperDevs.Celesium" Version="1.0.1" />
+        <PackageReference Include="CopperDevs.Celesium" Version="1.1.2" />
     </ItemGroup>
 
     <ItemGroup>
@@ -46,24 +46,18 @@
     </ItemGroup>
 
     <ItemGroup>
-        <Compile Update="WindowCallbacks.cs">
-            <DependentUpon>Window.cs</DependentUpon>
-        </Compile>
-        <Compile Update="WindowHandler.cs">
-            <DependentUpon>Window.cs</DependentUpon>
-        </Compile>
-        <Compile Update="WindowInfo.cs">
-            <DependentUpon>Window.cs</DependentUpon>
-        </Compile>
-        <Compile Update="WindowInput.cs">
-            <DependentUpon>Window.cs</DependentUpon>
-        </Compile>
-        <Compile Update="WindowMethods.cs">
-            <DependentUpon>Window.cs</DependentUpon>
-        </Compile>
-        <Compile Update="BaseWindow.cs">
-            <DependentUpon>Window.cs</DependentUpon>
-        </Compile>
+      <Compile Update="Window.Info.cs">
+        <DependentUpon>Window.cs</DependentUpon>
+      </Compile>
+      <Compile Update="Window.Lifecycle.cs">
+        <DependentUpon>Window.cs</DependentUpon>
+      </Compile>
+      <Compile Update="Window.Input.cs">
+        <DependentUpon>Window.cs</DependentUpon>
+      </Compile>
+      <Compile Update="Window.Time.cs">
+        <DependentUpon>Window.cs</DependentUpon>
+      </Compile>
     </ItemGroup>
 
 </Project>

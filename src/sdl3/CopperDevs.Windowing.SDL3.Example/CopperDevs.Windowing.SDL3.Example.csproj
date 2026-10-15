@@ -6,6 +6,7 @@
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
         <LangVersion>14</LangVersion>
+        <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     </PropertyGroup>
 
     <ItemGroup>
@@ -14,7 +15,7 @@
     </ItemGroup>
 
     <ItemGroup>
-      <PackageReference Include="CopperDevs.Celesium" Version="1.0.1" />
+      <PackageReference Include="CopperDevs.Celesium" Version="1.1.2" />
     </ItemGroup>
     
 </Project>

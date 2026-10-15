@@ -2,7 +2,7 @@ using CopperDevs.Windowing.Data;
 
 namespace CopperDevs.Windowing.SDL3.Data;
 
-internal class SdlKeyMap : Dictionary<InputKey, SDL_Keycode>
+internal sealed class SdlKeyMap : Dictionary<InputKey, SDL_Keycode>
 {
     public SdlKeyMap()
     {

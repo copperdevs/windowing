@@ -2,10 +2,6 @@ using CopperDevs.Celesium;
 
 namespace CopperDevs.Windowing.Data;
 
-/// <summary>
-/// Base window creation options
-/// </summary>
-/// <remarks>Can be used with <see cref="CopperDevs.Windowing.Window.Create{TWindow}()"/> or <see cref="CopperDevs.Windowing.Window.Create{TWindow}(WindowOptions)"/></remarks>
 public record WindowOptions
 {
     /// <summary>
@@ -24,7 +20,7 @@ public record WindowOptions
     /// <remarks>
     /// Set to 0 (or any value below) to disable 
     /// </remarks>
-    public int FrameRenderDelay = 10;
+    public int FrameRenderDelay = 0;
 
     /// <summary>
     /// Default settings

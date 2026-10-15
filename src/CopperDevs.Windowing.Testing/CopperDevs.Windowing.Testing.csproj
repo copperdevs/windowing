@@ -15,7 +15,7 @@
     </ItemGroup>
 
     <ItemGroup>
-      <PackageReference Include="CopperDevs.Celesium" Version="1.0.1" />
+      <PackageReference Include="CopperDevs.Celesium" Version="1.1.2" />
     </ItemGroup>
 
 </Project>

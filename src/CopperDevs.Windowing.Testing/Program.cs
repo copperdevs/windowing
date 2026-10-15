@@ -1,34 +1,33 @@
+using CopperDevs.Celesium;
+using CopperDevs.Windowing.Data;
 using CopperDevs.Windowing.SDL3;
-using CopperDevs.Windowing.SDL3.Data;
+using CopperDevs.Windowing.Utility;
 
 namespace CopperDevs.Windowing.Testing;
 
 // testing project moment
 public static class Program
 {
-    private static SDL3Window window = null!;
-    private static SDLRenderer renderer = null!;
+    private static FPSCounter fps = null!;
 
     public static void Main()
     {
-        var options = SDL3WindowOptions.Default with
+        var options = WindowOptions.Default with
         {
-            Title = "CopperDevs Windowing Example"
+            Title = "Windowing Example",
+            FrameRenderDelay = 10
         };
 
-        window = Window.Create<SDL3Window>(options);
-        renderer = window.GetRenderer()!;
-
+        using var window = new Window(new SDLBackend(), options);
+        fps = window.CreateFPSCounter();
+        
         window.OnLoad += OnLoad;
         window.OnUpdate += OnUpdate;
         window.OnRender += OnRender;
         window.OnClose += OnClose;
-
+        
         window.Run();
-
-        window.Dispose();
     }
-
 
     private static void OnLoad()
     {
