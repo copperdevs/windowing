@@ -24,7 +24,7 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="CopperDevs.Celesium" Version="1.1.1" />
+        <PackageReference Include="CopperDevs.Celesium" Version="1.1.2" />
         <PackageReference Include="ppy.SDL3-CS" Version="2025.220.0" />
     </ItemGroup>
 

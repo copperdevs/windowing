@@ -116,7 +116,7 @@ public unsafe class SDLRenderer : SafeDisposable
 
     public void DrawLines(List<Vector2> points)
     {
-        SDLUtil.UseArrayAsPointer(points, vector => new SDL_FPoint
+        points.UseAsPointer(vector => new SDL_FPoint
         {
             x = vector.X,
             y = vector.Y
@@ -154,7 +154,7 @@ public unsafe class SDLRenderer : SafeDisposable
 
     public void DrawPoints(List<Vector2> points)
     {
-        SDLUtil.UseArrayAsPointer(points, vector => new SDL_FPoint
+        points.UseAsPointer(vector => new SDL_FPoint
         {
             x = vector.X,
             y = vector.Y
@@ -200,7 +200,7 @@ public unsafe class SDLRenderer : SafeDisposable
 
     public void DrawRects(List<SDL_FRect> rects)
     {
-        SDLUtil.UseArrayAsPointer(rects, ptr => SDL_RenderRects(native, ptr, rects.Count));
+        rects.UseAsPointer(ptr => SDL_RenderRects(native, ptr, rects.Count));
     }
 
     public void DrawRects(List<SDL_FRect> rects, SDL_FColor color)
@@ -242,7 +242,7 @@ public unsafe class SDLRenderer : SafeDisposable
 
     public void DrawFillRects(List<SDL_FRect> rects)
     {
-        SDLUtil.UseArrayAsPointer(rects, ptr => SDL_RenderFillRects(native, ptr, rects.Count));
+        rects.UseAsPointer(ptr => SDL_RenderFillRects(native, ptr, rects.Count));
     }
 
     public void DrawFillRects(List<SDL_FRect> rects, SDL_FColor color)
