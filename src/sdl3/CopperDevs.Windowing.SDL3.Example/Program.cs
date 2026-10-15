@@ -2,6 +2,7 @@
 using CopperDevs.Celesium;
 using CopperDevs.Windowing.Data;
 using CopperDevs.Windowing.SDL3.Data;
+using CopperDevs.Windowing.Utility;
 
 namespace CopperDevs.Windowing.SDL3.Example;
 
@@ -19,6 +20,8 @@ public static class Program
     private const float ArrowChanger = 0.5f;
     private static float scale = 1;
 
+    private static FPSCounter fps;
+
     public static void Main()
     {
         var options = SDL3WindowOptions.Default with
@@ -26,8 +29,9 @@ public static class Program
             Title = "CopperDevs SDL3 Windowing Example",
             RendererOptions = new RendererOptions
             {
-                TargetRenderer = SDLRenderers.Renderer
-            }
+                TargetRenderer = SDLRenderers.Renderer,
+            },
+            FrameRenderDelay = 0
         };
 
         window = Window.Create<SDL3Window>(options);
@@ -35,6 +39,8 @@ public static class Program
 
         window.OnUpdate += OnUpdate;
         window.OnRender += OnRender;
+
+        fps = window.CreateFPSCounter();
 
         window.Run();
 
@@ -91,7 +97,7 @@ public static class Program
         var oldScale = renderer.Scale;
         renderer.Scale = Vector2.One * 1.5f; // bigger text moment
 
-        renderer.DrawDebugText($"FPS: {Time.FrameRate}", new Vector2(16, 16), Color.Black);
+        renderer.DrawDebugText($"FPS: {fps.AverageFrameRate}", new Vector2(16, 16), Color.Black);
         renderer.DrawDebugText($"Mouse Pos: {Input.GetMousePosition()}", new Vector2(16, 26), Color.Black);
         renderer.DrawDebugText($"Scale: {scale}", new Vector2(16, 36), Color.Black);
         renderer.DrawDebugText($"Line Count: {PointIndexes.Count}", new Vector2(16, 46), Color.Black);
