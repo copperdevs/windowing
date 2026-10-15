@@ -29,7 +29,7 @@ public static class Program
     {
         var options = SDL3WindowOptions.Default with
         {
-            Title = "CopperDevs SDL3 Windowing Example",
+            Title = "SDL3 Windowing Example",
             FrameRenderDelay = 0
         };
 
