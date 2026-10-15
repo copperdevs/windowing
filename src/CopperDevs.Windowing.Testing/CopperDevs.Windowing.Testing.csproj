@@ -10,12 +10,13 @@
     </PropertyGroup>
 
     <ItemGroup>
+        <ProjectReference Include="..\..\CopperDevs.Windowing.Utility\CopperDevs.Windowing.Utility.csproj" />
         <ProjectReference Include="..\CopperDevs.Windowing\CopperDevs.Windowing.csproj"/>
         <ProjectReference Include="..\sdl3\CopperDevs.Windowing.SDL3\CopperDevs.Windowing.SDL3.csproj"/>
     </ItemGroup>
 
     <ItemGroup>
-      <PackageReference Include="CopperDevs.Celesium" Version="1.0.1" />
+      <PackageReference Include="CopperDevs.Celesium" Version="1.1.1" />
     </ItemGroup>
 
 </Project>

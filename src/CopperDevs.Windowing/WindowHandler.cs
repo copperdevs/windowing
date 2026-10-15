@@ -4,9 +4,6 @@ namespace CopperDevs.Windowing;
 
 public partial class Window
 {
-    private readonly FPSCounter fpsCounter = new();
-    internal int GetFrameRate() => fpsCounter.FrameRate;
-
     /// <summary>
     /// Should the window still be updating
     /// </summary>
@@ -42,8 +39,8 @@ public partial class Window
     /// </summary>
     public void RenderWindow()
     {
-        fpsCounter.Update();
-
+        OnPreUpdate?.Invoke();
+        
         UpdateInput();
         StartWindowUpdate();
 

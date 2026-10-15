@@ -31,9 +31,4 @@ public static class Time
     /// </summary>
     /// <remarks>Same as <see cref="TotalTime"/>, just as a float</remarks>
     public static float DeltaTimeAsFloat => (float)DeltaTime;
-
-    /// <summary>
-    /// Current frame per second count
-    /// </summary>
-    public static int FrameRate => window!.GetFrameRate();
 }

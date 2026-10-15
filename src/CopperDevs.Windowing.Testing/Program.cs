@@ -1,5 +1,8 @@
+using CopperDevs.Celesium;
+using CopperDevs.Windowing.Data;
 using CopperDevs.Windowing.SDL3;
 using CopperDevs.Windowing.SDL3.Data;
+using CopperDevs.Windowing.Utility;
 
 namespace CopperDevs.Windowing.Testing;
 
@@ -8,6 +11,8 @@ public static class Program
 {
     private static SDL3Window window = null!;
     private static SDLRenderer renderer = null!;
+
+    private static FPSCounter fps = null!;
 
     public static void Main()
     {
@@ -24,6 +29,8 @@ public static class Program
         window.OnRender += OnRender;
         window.OnClose += OnClose;
 
+        fps = window.CreateFPSCounter();
+
         window.Run();
 
         window.Dispose();
@@ -36,6 +43,7 @@ public static class Program
 
     private static void OnUpdate()
     {
+        Log.Info($"{fps.AverageFrameRate}");
     }
 
     private static void OnRender()

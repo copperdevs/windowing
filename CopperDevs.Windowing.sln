@@ -27,6 +27,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Scripts", "Scripts", "{558D
 		scripts\output.txt = scripts\output.txt
 	EndProjectSection
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CopperDevs.Windowing.Utility", "CopperDevs.Windowing.Utility\CopperDevs.Windowing.Utility.csproj", "{223B618D-6785-404C-BB05-45AD3691718D}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -53,6 +55,10 @@ Global
 		{26DE41E7-5C3E-4FD6-80ED-C2D5BE71DE9A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{26DE41E7-5C3E-4FD6-80ED-C2D5BE71DE9A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{26DE41E7-5C3E-4FD6-80ED-C2D5BE71DE9A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{223B618D-6785-404C-BB05-45AD3691718D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{223B618D-6785-404C-BB05-45AD3691718D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{223B618D-6785-404C-BB05-45AD3691718D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{223B618D-6785-404C-BB05-45AD3691718D}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{356BC720-9F6F-4671-BBD5-CD82C7A9B63B} = {BB9BC5E4-1DA0-41EA-9F8B-28F7D18FB7D1}
