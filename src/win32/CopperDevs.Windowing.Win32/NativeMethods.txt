@@ -14,3 +14,5 @@ PostQuitMessage
 WM_QUIT
 WM_CLOSE
 WM_DESTROY
+PostMessage
+PostThreadMessage

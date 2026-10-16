@@ -1,40 +1,108 @@
-using System;
-using System.Runtime.CompilerServices;
+using System.Collections.Concurrent;
 using static Windows.Win32.PInvoke;
 using Windows.Win32.Foundation;
-using static Windows.Win32.UI.WindowsAndMessaging.WINDOW_EX_STYLE;
 using static Windows.Win32.UI.WindowsAndMessaging.WINDOW_STYLE;
 using Windows.Win32.UI.WindowsAndMessaging;
 using System.Runtime.InteropServices;
 using System.Runtime.Versioning;
-using Windows.Win32;
 using CopperDevs.Celesium;
 using CopperDevs.Windowing.Data;
 
 namespace CopperDevs.Windowing.Win32;
 
-[SupportedOSPlatform("windows5.0")]
-internal unsafe class ThinWin32Window : SafeDisposable
+// TODO: lotta thread handling to deal with here :p
+[SupportedOSPlatform("windows5.1.2600")]
+internal class ThinWin32Window
 {
-    private HINSTANCE hinstance;
-    private HWND hwndMain;
-    private readonly WNDCLASSW wndClass;
+    // ReSharper disable once PrivateFieldCanBeConvertedToLocalVariable
+    private readonly Thread windowThread;
 
-    private const string WindowClassName = "CopperWindowing";
+    private const string WindowClassName = "CopperWindowing"; // TODO: make the window class be registered once per lifetime
+    private WNDCLASSW wndClass;
+
+    private HINSTANCE hInstance;
+    private HWND hwndMain;
+
+    private readonly WindowOptions options;
+
+    public bool RequestsShutdown { get; private set; }
+
+    private readonly ConcurrentQueue<MSG> unresolvedMessages = new();
+
+    private volatile bool shutdownRequested;
+
+    public void HandleUnresolvedMessages(Action<MSG> action)
+    {
+        while (unresolvedMessages.TryDequeue(out var msg))
+            action(msg);
+    }
+
+    public void PurgeUnhandledMessages()
+    {
+        unresolvedMessages.Clear();
+    }
 
     public ThinWin32Window(WindowOptions options)
     {
-        hinstance = new HINSTANCE();
+        this.options = options;
 
-        hinstance = (HINSTANCE)GetModuleHandle((PCWSTR)null).Value;
+        windowThread = new Thread(WindowMain)
+        {
+            IsBackground = true,
+            Name = $"{WindowClassName} Window",
+        };
+
+        windowThread.Start();
+    }
+
+    private void WindowMain()
+    {
+        try
+        {
+            WindowSetup();
+        }
+        catch (Exception e)
+        {
+            Log.Fatal($"Failed to setup the window: {e.Message}");
+            Log.Exception(e);
+            return;
+        }
+
+        if (shutdownRequested)
+        {
+            PostMessage(hwndMain, WM_CLOSE, default, default);
+        }
+
+        try
+        {
+            WindowMessageHandling();
+        }
+        catch (Exception e)
+        {
+            Log.Fatal($"Failure while handling messages: {e.Message}");
+            Log.Exception(e);
+        }
+        finally
+        {
+            WindowShutdown();
+        }
+    }
+
+    private unsafe void WindowSetup()
+    {
+        hInstance = (HINSTANCE)GetModuleHandle((PCWSTR)null).Value;
 
         fixed (char* className = WindowClassName.ToCharArray())
+        fixed (char* titleName = options.Title.ToCharArray())
         {
-            wndClass = new WNDCLASSW()
+            var classNameStr = new PCWSTR(className);
+            var titleNameStr = new PCWSTR(titleName);
+
+            wndClass = new WNDCLASSW
             {
                 lpfnWndProc = WindowProc,
-                hInstance = hinstance,
-                lpszClassName = new PCWSTR(className)
+                hInstance = hInstance,
+                lpszClassName = classNameStr
             };
 
             if (RegisterClass(wndClass) == 0)
@@ -43,49 +111,30 @@ internal unsafe class ThinWin32Window : SafeDisposable
                 throw new InvalidOperationException($"RegisterClass failed with Win32 error {error}.");
             }
 
-            fixed (char* titleName = options.Title.ToCharArray())
+            if (TryCreateWindow(classNameStr, titleNameStr, hInstance, out hwndMain))
             {
-                hwndMain = CreateWindowEx
-                (
-                    0, // no extended style
-                    className, // class name
-                    titleName, // window name 
-                    WS_OVERLAPPEDWINDOW, // window style
-                    CW_USEDEFAULT, // default horizontal position
-                    CW_USEDEFAULT, // default vertical position
-                    CW_USEDEFAULT, // default width
-                    CW_USEDEFAULT, // default width
-                    (HWND)null, // no parent or owner window
-                    (HMENU)null, // class menu used 
-                    hinstance, // instance handle 
-                    null // no window creation data}
-                );
-
-
-                if (hwndMain.IsNull)
-                {
-                    var error = Marshal.GetLastPInvokeError();
-                    UnregisterClass(new PCWSTR(className), hinstance);
-
-                    throw new InvalidOperationException($"CreateWindowEx failed with Win32 error {error}.");
-                }
-
                 ShowWindow(hwndMain, SHOW_WINDOW_CMD.SW_SHOW);
+            }
+            else
+            {
+                var error = Marshal.GetLastPInvokeError();
+                UnregisterClass(new PCWSTR(className), hInstance);
+
+                throw new InvalidOperationException($"CreateWindowEx failed with Win32 error {error}.");
             }
         }
     }
 
-    private const int EventsPerPeep = 64;
-    public Action<MSG> HandleEvent = null!;
-
-    public bool RequestsShutdown { get; private set; }
-
-    public void Poll()
+    private unsafe void WindowMessageHandling()
     {
-        for (var i = 0; i < EventsPerPeep; i++)
+        MSG msg = default;
+
+        while (true)
         {
-            if (!PeekMessage(out var msg, (HWND)null, 0, 0, PEEK_MESSAGE_REMOVE_TYPE.PM_REMOVE))
-                break;
+            var result = GetMessage(&msg, (HWND)null, 0, 0);
+
+            if (result == -1)
+                throw new InvalidOperationException($"GetMessage failed {Marshal.GetLastPInvokeError()}.");
 
             if (msg.message is WM_QUIT)
             {
@@ -96,8 +145,38 @@ internal unsafe class ThinWin32Window : SafeDisposable
             TranslateMessage(msg);
             DispatchMessage(msg);
 
-            HandleEvent?.Invoke(msg);
+            unresolvedMessages.Enqueue(msg);
         }
+    }
+
+    private unsafe void WindowShutdown()
+    {
+        if (!hwndMain.IsNull)
+            DestroyWindow(hwndMain);
+
+        fixed (char* classNamePtr = WindowClassName.ToCharArray())
+            UnregisterClass(new PCWSTR(classNamePtr), hInstance);
+    }
+
+    private static unsafe bool TryCreateWindow(PCWSTR className, PCWSTR titleName, HINSTANCE hinstance, out HWND hwnd)
+    {
+        hwnd = CreateWindowEx
+        (
+            0, // no extended style
+            className, // class name
+            titleName, // window name 
+            WS_OVERLAPPEDWINDOW, // window style
+            CW_USEDEFAULT, // default horizontal position
+            CW_USEDEFAULT, // default vertical position
+            CW_USEDEFAULT, // default width
+            CW_USEDEFAULT, // default width
+            (HWND)null, // no parent or owner window
+            (HMENU)null, // class menu used 
+            hinstance, // instance handle 
+            null // no window creation data
+        );
+
+        return !hwnd.IsNull;
     }
 
     private static LRESULT WindowProc(HWND hwnd, uint msg, WPARAM wParam, LPARAM lParam)
@@ -116,12 +195,16 @@ internal unsafe class ThinWin32Window : SafeDisposable
         return DefWindowProc(hwnd, msg, wParam, lParam);
     }
 
-    public override void DisposeResources()
+    public void Shutdown()
     {
-        if (!hwndMain.IsNull)
-            DestroyWindow(hwndMain);
+        if (hwndMain.IsNull || shutdownRequested)
+            return;
+        
+        shutdownRequested = true;
 
-        fixed (char* classNamePtr = WindowClassName.ToCharArray())
-            UnregisterClass(new PCWSTR(classNamePtr), hinstance);
+        var result = PostMessage(hwndMain, WM_CLOSE, default, default);
+
+        if (!result)
+            throw new InvalidOperationException($"{nameof(PostMessage)} failed {Marshal.GetLastPInvokeError()}.");
     }
 }

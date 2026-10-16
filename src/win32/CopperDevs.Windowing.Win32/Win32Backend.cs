@@ -5,32 +5,34 @@ using CopperDevs.Windowing.Data;
 
 namespace CopperDevs.Windowing.Win32;
 
-[SupportedOSPlatform("windows5.0")]
+[SupportedOSPlatform("windows5.1.2600")]
 public class Win32Backend : IWindowingBackend
 {
-    private ThinWin32Window thin = null!;
+    private ThinWin32Window window = null!;
 
     public void CreateWindow(WindowOptions options)
     {
-        thin = new ThinWin32Window(options);
+        window = new ThinWin32Window(options);
     }
 
     public void StartWindowUpdate()
     {
-        thin.Poll();
+        window.HandleUnresolvedMessages(_ => {});
     }
 
     public void StopWindowUpdate()
     {
+        window.PurgeUnhandledMessages(); // probs not the best approach
     }
 
     public void DestroyWindow()
     {
+        window.Shutdown();
     }
 
     public bool RequestsStop()
     {
-        return thin.RequestsShutdown;
+        return window.RequestsShutdown;
     }
 
     public IInput GetRelevantInputBackend()
@@ -140,6 +142,5 @@ public class Win32Backend : IWindowingBackend
 
     public void Dispose()
     {
-        thin.Dispose();
     }
 }

@@ -34,10 +34,6 @@ public static class Program
 
     private static void OnUpdate()
     {
-        
-        Console.CursorTop = 0;
-        Console.CursorLeft = 0;
-        Console.WriteLine($"{fps.AverageFrameRate}".PadRight(10));
     }
 
     private static void OnRender()
