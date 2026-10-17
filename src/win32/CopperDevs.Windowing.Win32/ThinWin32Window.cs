@@ -29,7 +29,7 @@ internal class ThinWin32Window
 
     private readonly ConcurrentQueue<MSG> unresolvedMessages = new();
 
-    private volatile bool shutdownRequested;
+    private volatile bool isAlive;
 
     public void HandleUnresolvedMessages(Action<MSG> action)
     {
@@ -66,11 +66,6 @@ internal class ThinWin32Window
             Log.Fatal($"Failed to setup the window: {e.Message}");
             Log.Exception(e);
             return;
-        }
-
-        if (shutdownRequested)
-        {
-            PostMessage(hwndMain, WM_CLOSE, default, default);
         }
 
         try
@@ -113,6 +108,7 @@ internal class ThinWin32Window
 
             if (TryCreateWindow(classNameStr, titleNameStr, hInstance, out hwndMain))
             {
+                isAlive = true;
                 ShowWindow(hwndMain, SHOW_WINDOW_CMD.SW_SHOW);
             }
             else
@@ -151,8 +147,12 @@ internal class ThinWin32Window
 
     private unsafe void WindowShutdown()
     {
+        isAlive = false;
+
         if (!hwndMain.IsNull)
             DestroyWindow(hwndMain);
+
+        hwndMain = default;
 
         fixed (char* classNamePtr = WindowClassName.ToCharArray())
             UnregisterClass(new PCWSTR(classNamePtr), hInstance);
@@ -197,14 +197,13 @@ internal class ThinWin32Window
 
     public void Shutdown()
     {
-        if (hwndMain.IsNull || shutdownRequested)
+        var hwnd = hwndMain;
+        if (!isAlive || hwnd.IsNull || !IsWindow(hwnd))
+            return;
+
+        if (PostMessage(hwnd, WM_CLOSE, default, default))
             return;
         
-        shutdownRequested = true;
-
-        var result = PostMessage(hwndMain, WM_CLOSE, default, default);
-
-        if (!result)
-            throw new InvalidOperationException($"{nameof(PostMessage)} failed {Marshal.GetLastPInvokeError()}.");
+        throw new InvalidOperationException($"{nameof(PostMessage)} failed {Marshal.GetLastPInvokeError()}.");
     }
 }
